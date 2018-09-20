@@ -13,14 +13,13 @@ public class JokeClient {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
         try{
-            String name;
+            String userName;
             do{
-                // System.out.print
-                //         ("Enter a hostname or an IP address, (quit) to end: ");
+               System.out.print("Please enter your name");
                 // System.out.flush();
-                name = in.readLine();
-                if(name.indexOf("quit") < 0)
-                    getRemoteAddress(serverName);
+                userName = in.readLine();
+                if(userName.indexOf("quit") < 0)
+                    getRemoteAddress(userName, serverName);
 
             } while (true);
             
@@ -39,39 +38,27 @@ public class JokeClient {
     
 
 
-static void getRemoteAddress (String serverName){
-
-	/* getRemoteAddress does most of the heavy lifting in communicating with the server.
-	It first creates a new socket (sock), passing the name of the server (localhost) and specifying which port
-	to connect to (1565) */
+static void getRemoteAddress (String userName, String serverName){
 
     Socket sock;
     BufferedReader fromServer;
     PrintStream toServer;
     String textFromServer;
+    BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     
     try{
+    
         sock = new Socket(serverName, 3024);
-
-    /* An attempt to connect to the server is executed when the socket, named sock here, is created.
-    	Variables fromServer, toServer, and textFromServer are created to read and write output between
-    	client and server */
 
         fromServer =
                 new BufferedReader(new InputStreamReader(sock.getInputStream()));
-        //toServer = new PrintStream(sock.getOutputStream());
-
-        //toServer.println(name); toServer.flush();
+        toServer = new PrintStream(sock.getOutputStream());
+        toServer.println(userName); toServer.flush();
 
         for (int i = 1; i<=3; i++){
             textFromServer = fromServer.readLine();
             if (textFromServer != null) System.out.println(textFromServer);
         }
-
-        /* readLine() is called on fromServer which retrieves outputfrom the server.
-    	If it is not null, the text will be printed to the client console. (i.e. if the server
-    	returns an IP address or an exception, the user will see the output.) and finally the
-    	socket is closed */
 
         sock.close();
     } catch (IOException x){

@@ -19,7 +19,10 @@ public void run(){
         in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
         out = new PrintStream(sock.getOutputStream());
     try{
-        printRemoteAddress(out);
+        String userName;
+        userName = in.readLine();
+        System.out.println("Server got user name " + userName);
+        printRemoteAddress(userName, out);
     } catch (Exception x){
         System.out.println("Server read error");
         x.printStackTrace();
@@ -29,10 +32,10 @@ public void run(){
     }
 }
 
-static void printRemoteAddress (PrintStream out){
+static void printRemoteAddress (String userName, PrintStream out){
 
     try{
-        out.println("Why did chicken cross road");
+        out.println(userName + "," + "Why did chicken cross road");
     }catch(Exception ex){
         out.println("Failed in attempt to look  up ");
     }
