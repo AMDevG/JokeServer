@@ -19,23 +19,13 @@ public void run(){
         in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
         out = new PrintStream(sock.getOutputStream());
     try{
-
-      /* run() function creates variables 'in' and 'out' to retrieve client input. A variable
-        of type String 'name' is created and reads in user input */
-
-        /*String name;
-        name = in.readLine();
-        System.out.println("Looking up: " + name);*/
         printRemoteAddress(out);
-
-        /* printRemoteAddress is called from within run function, catching any IO exceptions,
-        and finally closing the socket */
-
     } catch (Exception x){
-        System.out.println("Server read error"); 
+        System.out.println("Server read error");
+        x.printStackTrace();
     }
-    
-    }catch(Exception e){System.out.println("Error");
+    sock.close();
+    }catch(IOException ioe){System.out.println(ioe);
     }
 }
 

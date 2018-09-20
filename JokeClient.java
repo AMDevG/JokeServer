@@ -13,13 +13,13 @@ public class JokeClient {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
         try{
-          
+            String name;
             do{
                 // System.out.print
                 //         ("Enter a hostname or an IP address, (quit) to end: ");
                 // System.out.flush();
-                //name = in.readLine();
-                //if(name.indexOf("quit") < 0)
+                name = in.readLine();
+                if(name.indexOf("quit") < 0)
                     getRemoteAddress(serverName);
 
             } while (true);
