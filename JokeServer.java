@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 class Worker extends Thread{
     Socket sock;
@@ -55,20 +56,21 @@ static String toText (byte ip[]) {
 
 public class JokeServer {
 
-     public static ArrayList<String> jokeList;
-
-    
-    /* InetServer's main function creates a new ServerSocket that will accept client connections.
-      The server will accept new connections until it is terminated due to the while(true) condition
-      which will always remain true. When a new connection is accepted, a new Worker thread is created
-      to handle the client requests. The server listens on port 3024 for any incoming connections. */
+    private static HashMap<String, String> jokeMap = new HashMap<String, String>();
+    private static HashMap<String, String> clientMap = new HashMap<String, String>();
 
     public static void main(String[] args) throws IOException {
        int q_len = 6;
        int port = 3024;
        Socket sock;
        ServerSocket servsock = new ServerSocket(port, q_len);
-
+       //ClientDB clientDB = clientDB.getInstance();
+        jokeMap.put("A", "Why did the chicken cross the road?");
+        jokeMap.put("B", "Why did the chicken cross the alley?");
+        jokeMap.put("C", "Why did the chicken cross the SIDEWALK?");
+        jokeMap.put("D", "Why did the chicken cross the GUTTER?");
+        
+        System.out.println("Created Hashmap of jokes");
        
        System.out.println("John Berry's Inet Server 1.8 starting up, listening at port 3024. \n");
        while(true){
@@ -77,3 +79,27 @@ public class JokeServer {
        }
     }
 }
+
+/*public final class ClientDB{
+
+  private static Map<Double, String> clientMap = new HashMap<Double, String>();
+
+  private static ClientDB instance;
+
+    private ClientDB(){}
+
+    public static CLientDB getInstance(){
+
+      if(instance == null){
+        instance = new ClientDB();
+        jokeMap.put("A", "Why did the chicken cross the road?");
+        jokeMap.put("B", "Why did the chicken cross the alley?");
+        jokeMap.put("C", "Why did the chicken cross the SIDEWALK?");
+        jokeMap.put("D", "Why did the chicken cross the GUTTER?");
+        System.out.println("Created Hashmap of jokes");
+        return instance;
+      }
+      return instance;
+    }*/
+
+

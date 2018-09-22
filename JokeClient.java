@@ -1,15 +1,21 @@
 import java.io.*;
 import java.net.*;
+import java.util.Random;
 
 public class JokeClient {
-    
+    private static int UID;
     public static void main (String args[]){
 
         String serverName;
         if(args.length < 1) serverName = "localhost";
         else serverName = args[0];
+
+        UID = generateUID();
+
         System.out.println("John Berry's Inet Client, 1.8.\n");
         System.out.println("Using server: " + serverName + ", Port: 3024");
+        System.out.println("Client UID " + UID);
+
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
         try{
@@ -36,7 +42,14 @@ public class JokeClient {
         return result.toString();
     }
     
+public static int generateUID(){
+    double min = 1;
+    double max = 8000000;
+    double doubleID = (Math.random() * ((max - min) + 1)) + min;
+    int ID = (int) Math.floor(doubleID);
 
+    return ID;
+}
 
 static void getRemoteAddress (String userName, String serverName){
 
@@ -54,6 +67,7 @@ static void getRemoteAddress (String userName, String serverName){
                 new BufferedReader(new InputStreamReader(sock.getInputStream()));
         toServer = new PrintStream(sock.getOutputStream());
         toServer.println(userName); toServer.flush();
+        toServer.println("Client UID " + UID); toServer.flush();
 
         for (int i = 1; i<=3; i++){
             textFromServer = fromServer.readLine();
