@@ -4,6 +4,9 @@ import java.util.Random;
 
 public class JokeClient {
     private static int UID;
+    private static boolean hasVisited;
+    private static String userName;
+
     public static void main (String args[]){
 
         String serverName;
@@ -19,13 +22,17 @@ public class JokeClient {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
         try{
-            String userName;
             do{
-               System.out.print("Please enter your name");
-                // System.out.flush();
-                userName = in.readLine();
-                if(userName.indexOf("quit") < 0)
-                    getRemoteAddress(userName, serverName);
+                if (!hasVisited){
+                    hasVisited = true;
+                    System.out.print("Please enter your name");
+                    userName = in.readLine();
+                    System.out.flush();
+                }
+                    // System.out.flush();
+                    if(userName.indexOf("quit") < 0)
+                        userName = in.readLine();
+                        getJoke(serverName);
 
             } while (true);
             
@@ -47,11 +54,10 @@ public static int generateUID(){
     double max = 8000000;
     double doubleID = (Math.random() * ((max - min) + 1)) + min;
     int ID = (int) Math.floor(doubleID);
-
     return ID;
 }
 
-static void getRemoteAddress (String userName, String serverName){
+static void getJoke(String serverName){
 
     Socket sock;
     BufferedReader fromServer;
@@ -66,7 +72,7 @@ static void getRemoteAddress (String userName, String serverName){
         fromServer =
                 new BufferedReader(new InputStreamReader(sock.getInputStream()));
         toServer = new PrintStream(sock.getOutputStream());
-        toServer.println(userName); toServer.flush();
+        toServer.println(UID); toServer.flush();
         toServer.println("Client UID " + UID); toServer.flush();
 
         for (int i = 1; i<=3; i++){

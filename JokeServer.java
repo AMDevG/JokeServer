@@ -20,10 +20,10 @@ public void run(){
         in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
         out = new PrintStream(sock.getOutputStream());
     try{
-        String userName;
-        userName = in.readLine();
-        System.out.println("Server got user name " + userName);
-        printRemoteAddress(userName, out);
+        String userID;
+        userID = in.readLine();
+        System.out.println("Server got user ID " + userID);
+        printRemoteAddress(userID, out);
     } catch (Exception x){
         System.out.println("Server read error");
         x.printStackTrace();
@@ -33,10 +33,10 @@ public void run(){
     }
 }
 
-static void printRemoteAddress (String userName, PrintStream out){
+static void printRemoteAddress (String userID, PrintStream out){
 
     try{
-        out.println(userName + "," + "Why did chicken cross road");
+        out.println(userID + ", " + "Why did chicken cross road");
     }catch(Exception ex){
         out.println("Failed in attempt to look  up ");
     }
@@ -69,10 +69,8 @@ public class JokeServer {
         jokeMap.put("B", "Why did the chicken cross the alley?");
         jokeMap.put("C", "Why did the chicken cross the SIDEWALK?");
         jokeMap.put("D", "Why did the chicken cross the GUTTER?");
-        
-        System.out.println("Created Hashmap of jokes");
        
-       System.out.println("John Berry's Inet Server 1.8 starting up, listening at port 3024. \n");
+       System.out.println("John Berry's JokeServer 1.8 starting up, listening at port 3024. \n");
        while(true){
            sock = servsock.accept();
            new Worker(sock).start();
