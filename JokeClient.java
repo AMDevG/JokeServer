@@ -6,17 +6,21 @@ public class JokeClient {
     private static int UID;
     private static boolean hasVisited;
     private static String userName;
+    private static Socket IDsock;
 
     public static void main (String args[]){
 
         boolean QUIT = false;
         String serverName;
-        Socket IDsock = null;
+        IDsock = null;
         PrintStream IDout = null;
 
         if(args.length < 1){
             serverName = "localhost";
-        }else{serverName = args[0];}
+            try{IDsock = new Socket(serverName, 3024);}catch(Exception e){e.printStackTrace();}
+        }else{serverName = args[0];
+            try{IDsock = new Socket(serverName, 3024);}catch(Exception e){e.printStackTrace();}
+        }
 
         UID = generateUID();
 
@@ -25,7 +29,6 @@ public class JokeClient {
         System.out.println("Client UID " + UID);
 
         try{
-            IDsock = new Socket(serverName, 3024);
             IDout = new PrintStream(IDsock.getOutputStream());
         } catch(IOException x){x.printStackTrace();}
 
@@ -46,12 +49,12 @@ public class JokeClient {
                     IDout.println(userName);
                     IDout.flush();
 
-                    System.out.print("Thank you, "+ userName + "!");
+                    //System.out.print("Thank you, "+ userName + "!");
                     getJoke(serverName);}
                     // System.out.flush();
                 if(userName.indexOf("quit") < 0){
-                    System.out.println("Back into visited");
-                    System.out.println("User Input is " + userName);
+                    //System.out.println("Back into visited");
+                    //System.out.println("User Input is " + userName);
                     userName = in.readLine();
                     getJoke(serverName);}
                 else{QUIT = true;}
@@ -72,8 +75,6 @@ public static int generateUID(){
 
 static void getJoke(String serverName){
 
-    System.out.println("In get joke");
-
     Socket sock;
     BufferedReader fromServer;
     PrintStream toServer;
@@ -82,16 +83,17 @@ static void getJoke(String serverName){
     
     try{
 
-        sock = new Socket(serverName, 3024);
+        //sock = new Socket(serverName, 3024);
         fromServer =
-                new BufferedReader(new InputStreamReader(sock.getInputStream()));
-        toServer = new PrintStream(sock.getOutputStream());
+                new BufferedReader(new InputStreamReader(IDsock.getInputStream()));
+        //toServer = new PrintStream(sock.getOutputStream());
         //toServer.println(UID); toServer.flush();
-        toServer.println("Client UID " + UID); toServer.flush();
+        //toServer.println("Client UID " + UID); toServer.flush();
 
         for (int i = 1; i<=3; i++){
-            System.out.println("In for loop from server");
+            //System.out.println("In for loop from server");
             textFromServer = fromServer.readLine();
+            //System.out.println("Received from Server: " + textFromServer);
             if (textFromServer != null) System.out.println(textFromServer);
         }
 

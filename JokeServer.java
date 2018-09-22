@@ -25,8 +25,9 @@ public void run(){
         userID = in.readLine();
         System.out.println("Connection accepted from " + userID);
         userName = in.readLine();
-        System.out.println("Server got user " + userName);
-        getJoke(userName, out);
+        //System.out.println("Server got user " + userName);
+        //out.println("About to send you a joke!");
+        sendJoke(userName, out);
     } catch (Exception x){
         System.out.println("Server read error");
         x.printStackTrace();
@@ -36,18 +37,15 @@ public void run(){
     }
 }
 
-static void getJoke (String userName, PrintStream out){
-
-    System.out.println("In get Joke");
+static void sendJoke (String userName, PrintStream out){
 
     try{
         //logClientID(userName);
         out.println(userName + ", " + "Why did chicken cross road");
-        System.out.println("Sending Joke");
+    
     }catch(Exception ex){
         out.println("Failed in attempt to look  up ");
     }
-    
 }
 
 static void logClientID(String userName){
