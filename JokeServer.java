@@ -21,9 +21,12 @@ public void run(){
         out = new PrintStream(sock.getOutputStream());
     try{
         String userID;
+        String userName;
         userID = in.readLine();
-        System.out.println("Server got user ID " + userID);
-        printRemoteAddress(userID, out);
+        System.out.println("Connection accepted from " + userID);
+        userName = in.readLine();
+        System.out.println("Server got user " + userName);
+        getJoke(userName, out);
     } catch (Exception x){
         System.out.println("Server read error");
         x.printStackTrace();
@@ -33,28 +36,25 @@ public void run(){
     }
 }
 
-static void printRemoteAddress (String userID, PrintStream out){
+static void getJoke (String userName, PrintStream out){
 
     try{
-        out.println(userID + ", " + "Why did chicken cross road");
+        //logClientID(userName);
+        out.println(userName + ", " + "Why did chicken cross road");
     }catch(Exception ex){
         out.println("Failed in attempt to look  up ");
     }
     
 }
 
-static String toText (byte ip[]) {
-  /* toText is used to make the output of getAddress() human readable */
- StringBuffer result = new StringBuffer ();
- for (int i = 0; i < ip.length; ++ i) {
- if (i > 0) result.append (".");
- result.append (0xff & ip[i]);
- }
- return result.toString ();
- }
+static void logClientID(String userName){
+
+  System.out.println("Running Log Client ID");
+  //JokeServer.getInstance().clientMap.put(userName, "");
+
 }
 
-public class JokeServer {
+public static class JokeServer {
 
     private static HashMap<String, String> jokeMap = new HashMap<String, String>();
     private static HashMap<String, String> clientMap = new HashMap<String, String>();
@@ -64,7 +64,7 @@ public class JokeServer {
        int port = 3024;
        Socket sock;
        ServerSocket servsock = new ServerSocket(port, q_len);
-       //ClientDB clientDB = clientDB.getInstance();
+       
         jokeMap.put("A", "Why did the chicken cross the road?");
         jokeMap.put("B", "Why did the chicken cross the alley?");
         jokeMap.put("C", "Why did the chicken cross the SIDEWALK?");
@@ -76,6 +76,17 @@ public class JokeServer {
            new Worker(sock).start();
        }
     }
+
+   // private JokeServer(){};
+
+    /*public static JokeServer getInstance(){
+      if(instance == null){
+        instance = new JokeServer();
+        return instance;
+      }
+      return instance;
+    }*/
+}
 }
 
 /*public final class ClientDB{
