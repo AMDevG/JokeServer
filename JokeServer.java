@@ -38,9 +38,12 @@ public void run(){
 
 static void getJoke (String userName, PrintStream out){
 
+    System.out.println("In get Joke");
+
     try{
         //logClientID(userName);
         out.println(userName + ", " + "Why did chicken cross road");
+        System.out.println("Sending Joke");
     }catch(Exception ex){
         out.println("Failed in attempt to look  up ");
     }

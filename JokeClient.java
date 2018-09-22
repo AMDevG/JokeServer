@@ -50,6 +50,7 @@ public class JokeClient {
                     getJoke(serverName);}
                     // System.out.flush();
                 if(userName.indexOf("quit") < 0){
+                    System.out.println("Back into visited");
                     System.out.println("User Input is " + userName);
                     userName = in.readLine();
                     getJoke(serverName);}
@@ -71,6 +72,8 @@ public static int generateUID(){
 
 static void getJoke(String serverName){
 
+    System.out.println("In get joke");
+
     Socket sock;
     BufferedReader fromServer;
     PrintStream toServer;
@@ -78,6 +81,7 @@ static void getJoke(String serverName){
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     
     try{
+
         sock = new Socket(serverName, 3024);
         fromServer =
                 new BufferedReader(new InputStreamReader(sock.getInputStream()));
@@ -86,11 +90,12 @@ static void getJoke(String serverName){
         toServer.println("Client UID " + UID); toServer.flush();
 
         for (int i = 1; i<=3; i++){
+            System.out.println("In for loop from server");
             textFromServer = fromServer.readLine();
             if (textFromServer != null) System.out.println(textFromServer);
         }
 
-        sock.close();
+        //sock.close();
     } catch (IOException x){
         System.out.println("Socket error");
         x.printStackTrace();
