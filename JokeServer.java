@@ -1,4 +1,9 @@
-
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package javaapplicationjokes;
 
 import java.io.*;
 import java.net.*;
@@ -32,10 +37,25 @@ public void run(){
         System.out.println("Server received User ID: " + userID);
         System.out.println("Server received User Name: " + userName);
        
+        //CHECKS TO SEE IF CLIENT HAS ALREADY VISITED BY QUERYING THE CLIENT MAP
+        //IF AN ENTRY FOR THE UID DOES NOT EXIST, ONE IS CREATED AND GIVEN TWO BLANK
+        //ARRAY LISTS TO TRACK THE PROVERBS AND JOKES THAT THE CLIENT HAS SEEN
+        
         if(!JokeServer.clientMap.containsKey(userID)){
+            
+            //IF USER DOES NOT EXIST, TWO ARRAYS (ONE FOR JOKES SEEN AND PROVERBS SEEN) ARE CREATED
+            //AND ADDED TO HASH MAP WHERE USER UID IS KEY
+            
             System.out.println("User doesn't exist, adding now!");
-            JokeServer.clientMap.put(userID, new ArrayList<String>());
-    
+            
+            ArrayList<ArrayList<String>> contentArray = new ArrayList<ArrayList<String>>();
+            ArrayList<String> jokeArray = new ArrayList<String>();
+            ArrayList<String> proverbArray = new ArrayList<String>();
+         
+            contentArray.add(jokeArray);
+            contentArray.add(proverbArray);
+            JokeServer.clientMap.put(userID, contentArray);
+            
         }
         System.out.println("Current UserMap is: ");
             for(String key : JokeServer.clientMap.keySet()){
@@ -71,21 +91,24 @@ static void sendJoke (String userName, String clientID, PrintStream out){
 static String checkClientProverbs(String ClientID){
     String proverbToReturn = "";
     
-    ArrayList<String> proverbsSeen = JokeServer.clientMap.get(ClientID);
+    //BUG IS IN ARRAY SIZE COUNT
+    
+    ArrayList<String> proverbsSeen = JokeServer.clientMap.get(ClientID).get(1);
     if (proverbsSeen.size() == 0){
         proverbToReturn = "PA";
-        JokeServer.clientMap.get(ClientID).add(proverbToReturn);
+        proverbsSeen.add(proverbToReturn);
     }
-    else if((proverbsSeen.size() == 4)){
-        JokeServer.clientMap.get(ClientID).clear();
+    else if(proverbsSeen.size() == 4){
+        proverbsSeen.clear();
         proverbToReturn = "PA";
-        JokeServer.clientMap.get(ClientID).add(proverbToReturn);
+        System.out.println("Proverb Cycle Completed");
+        proverbsSeen.add(proverbToReturn);
         }
     else{
         for(String proverb : JokeServer.proverbChoices){
             if(!proverbsSeen.contains(proverb)){
                 proverbToReturn = proverb;
-                JokeServer.clientMap.get(ClientID).add(proverbToReturn);
+                proverbsSeen.add(proverbToReturn);
                 return proverbToReturn;
             }
         }
@@ -96,22 +119,28 @@ static String checkClientProverbs(String ClientID){
 static String checkClientJokes(String ClientID){
     String jokeToReturn = "";
     
-    ArrayList<String> jokesSeen = JokeServer.clientMap.get(ClientID);
+    System.out.println("In Check Client Jokes.");
+    
+    ArrayList<String> jokesSeen = JokeServer.clientMap.get(ClientID).get(0);
+   
+    System.out.println("current set of Jokes Seen: " + jokesSeen);
+    
     if (jokesSeen.size() == 0){
         jokeToReturn = "JA";
-        JokeServer.clientMap.get(ClientID).add(jokeToReturn);
+        jokesSeen.add(jokeToReturn);
     }
     else if((jokesSeen.size() == 4)){
-        JokeServer.clientMap.get(ClientID).clear();
+        jokesSeen.clear();
         jokeToReturn = "JA";
-        JokeServer.clientMap.get(ClientID).add(jokeToReturn);
+        System.out.println("Joke Cycle Completed");
+        jokesSeen.add(jokeToReturn);
         
         }
     else{
         for(String joke : JokeServer.jokeChoices){
             if(!jokesSeen.contains(joke)){
                 jokeToReturn = joke;
-                JokeServer.clientMap.get(ClientID).add(jokeToReturn);
+                jokesSeen.add(jokeToReturn);
                 return jokeToReturn;
             }
         }
@@ -129,7 +158,7 @@ public static class JokeServer {
     public static ArrayList<String> jokeChoices = new ArrayList<String>();
     public static ArrayList<String> proverbChoices = new ArrayList<String>();
     
-    private static HashMap<String, ArrayList<String>> clientMap = new HashMap<String, ArrayList<String>>();
+    private static HashMap<String, ArrayList<ArrayList<String>>> clientMap = new HashMap<String, ArrayList<ArrayList<String>>>();
     
     public static void main(String[] args) throws IOException {
 
