@@ -14,6 +14,7 @@ public class JokeClient {
         String serverName;
         IDsock = null;
         PrintStream IDout = null;
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
         if(args.length < 1){
             serverName = "localhost";
@@ -29,13 +30,16 @@ public class JokeClient {
         System.out.println("Client UID " + UID);
 
         try{
+            System.out.println("Sending UID");
             IDout = new PrintStream(IDsock.getOutputStream());
+            IDout.print(UID);IDout.flush();
+            String nameToSend = in.readLine();
+            System.out.println("Sending name " + nameToSend);
+            IDout.println(nameToSend);
         } catch(IOException x){x.printStackTrace();}
 
-        IDout.println("User ID Received " + UID); 
-        IDout.flush();
+        //SENDS COOKIE OF USER ID TO SERVER
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         
     try{
         try{
@@ -44,7 +48,6 @@ public class JokeClient {
                 if (!hasVisited){
                     hasVisited = true;
                     //System.out.println("In first time visit loop");
-                    System.out.println("Please enter your name");
                     userName = in.readLine();
                     IDout.println(userName);
                     IDout.flush();
