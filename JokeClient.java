@@ -5,67 +5,41 @@ import java.util.Random;
 public class JokeClient {
     private static int UID;
     private static boolean hasVisited;
-    private static String userName;
+    public static String userName;
     private static Socket IDsock;
 
     public static void main (String args[]){
-
-        boolean QUIT = false;
         String serverName;
         IDsock = null;
-        PrintStream IDout = null;
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-
         if(args.length < 1){
-            serverName = "localhost";
-            try{IDsock = new Socket(serverName, 4545);}catch(Exception e){e.printStackTrace();}
+            serverName = "localhost";        
         }else{serverName = args[0];
-            try{IDsock = new Socket(serverName, 4545);}catch(Exception e){e.printStackTrace();}
         }
-
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         UID = generateUID();
-
         System.out.println("John Berry's JokeClient, 1.8.\n");
         System.out.println("Using server: " + serverName + ", Port: 4545");
         System.out.println("Client UID " + UID);
 
-        try{
+        /*try{
             IDout = new PrintStream(IDsock.getOutputStream());
             IDout.print(UID);
-            String nameToSend = in.readLine();
-            System.out.println("Sending name " + nameToSend);
-            IDout.println(nameToSend);
-        } catch(IOException x){x.printStackTrace();}
+            //String nameToSend = in.readLine();
+            //System.out.println("Sending name " + nameToSend);
+            //IDout.println(nameToSend);
+        } catch(IOException x){x.printStackTrace();}*/
 
         //SENDS COOKIE OF USER ID TO SERVER
-
         
     try{
-        try{
-            do{
-                //System.out.println("Has Visited = " + hasVisited);
-                if (!hasVisited){
-                    hasVisited = true;
-                    //System.out.println("In first time visit loop");
-                    userName = in.readLine();
-                    IDout.println(userName);
-                    IDout.flush();
-
-                    //System.out.print("Thank you, "+ userName + "!");
-                    getJoke(serverName);}
-                    // System.out.flush();
-                if(userName.indexOf("quit") < 0){
-                    //System.out.println("Back into visited");
-                    //System.out.println("User Input is " + userName);
-                    userName = in.readLine();
-                    getJoke(serverName);}
-                else{QUIT = true;}
-            }while (!QUIT);  
-        }catch (Exception x) {x.printStackTrace();}
-    }catch (Exception ex) {ex.printStackTrace();}
+        do{ 
+            userName = in.readLine(); 
+            if(userName.indexOf("quit") < 0){
+                getJoke(serverName);}
+        }while (true);  
+        
+    }catch (Exception x) {x.printStackTrace();}
 }
-
-
     
 public static int generateUID(){
     double min = 1;
@@ -77,7 +51,7 @@ public static int generateUID(){
 
 static void getJoke(String serverName){
 
-    Socket sock;
+    Socket IDsock;
     BufferedReader fromServer;
     PrintStream toServer;
     String textFromServer;
@@ -85,21 +59,21 @@ static void getJoke(String serverName){
     
     try{
 
-        //sock = new Socket(serverName, 3024);
+        IDsock = new Socket(serverName, 4545);
         fromServer =
                 new BufferedReader(new InputStreamReader(IDsock.getInputStream()));
-        //toServer = new PrintStream(sock.getOutputStream());
-        //toServer.println(UID); toServer.flush();
-        //toServer.println("Client UID " + UID); toServer.flush();
-
+        toServer = new PrintStream(IDsock.getOutputStream());
+        System.out.println("Please enter your name");
+        userName = in.readLine();
+        toServer.println(UID + " | " + userName); toServer.flush();
+        //toServer.println(userName); toServer.flush();
+        
         for (int i = 1; i<=3; i++){
-            //System.out.println("In for loop from server");
             textFromServer = fromServer.readLine();
-            //System.out.println("Received from Server: " + textFromServer);
             if (textFromServer != null) System.out.println(textFromServer);
         }
 
-        //sock.close();
+        IDsock.close();
     } catch (IOException x){
         System.out.println("Socket error");
         x.printStackTrace();

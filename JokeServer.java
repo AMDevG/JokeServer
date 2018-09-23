@@ -20,24 +20,34 @@ public void run(){
     BufferedReader in = null;
     String userName;
     String userID;
+    String userData;
     
     try{
         in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
         out = new PrintStream(sock.getOutputStream());
         }catch(IOException ioe){System.out.println(ioe);}
    try{
-        userID = in.readLine();
-        System.out.println("Connection accepted from " + userID);
-        out.println("Welcome!, please enter your name!");
-        userName = in.readLine();
-        System.out.println("userName is currently " + userName);
+        userData = in.readLine();
+        System.out.println("Server received:  " + userData);
+        String[] userDataArray = userData.split("\\|");
         
-        if(!JokeServer.clientMap.containsKey(userID)){
-            System.out.println("User doesn't exist, adding now!");
-            JokeServer.clientMap.put(userID, new ArrayList<String>());
-            //System.out.println("User: " + userID + "has seen jokes: " + checkClientJokes(userID));
-        }
-        sendJoke(userName, userID, out);
+        userID = userDataArray[0];
+        userName = userDataArray[1].replaceAll("\\s+","");
+        
+        System.out.println("Server received User ID: " + userID);
+        System.out.println("Server received User Name: " + userName);
+        
+        //out.println("Welcome!, please enter your name!");out.flush();
+        //userName = in.readLine();
+        //System.out.println("userName is currently " + userName);
+        
+        
+//        if(!JokeServer.clientMap.containsKey(userID)){
+//            System.out.println("User doesn't exist, adding now!");
+//            JokeServer.clientMap.put(userID, new ArrayList<String>());
+//            System.out.println("User: " + userID + "has seen jokes: " + checkClientJokes(userID));
+//        }
+//        sendJoke(userName, userID, out);
     } catch (Exception x){x.printStackTrace();}
    
 }
