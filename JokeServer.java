@@ -1,8 +1,43 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+/*--------------------------------------------------------
+
+1. John Berry / 9/23/2018:
+
+2. Java version 1.8
+
+3. Precise command-line compilation examples / instructions:
+
+> javac JokeServer.java
+> javac JokeClient.java
+> javac JokeCLientAdmin.java
+
+4.
+
+In separate shell windows:
+
+> java JokeServer
+> java JokeClient
+> java JokeClientAdmin
+
+
+This runs across machines, in which case you have to pass the IP address of
+the server to the clients. For exmaple, if the server is running at
+140.192.1.22 then you would type:
+
+> java JokeClient 140.192.1.22
+> java JokeClientAdmin 140.192.1.22
+
+5. List of files needed for running the program.
+
+ a. JokeServer.java
+ b. JokeClient.java
+ c. JokeClientAdmin.java
+
+5. Notes:
+
+- UID generator is suedo random choosing a number between 1 and 8,000,000 
+
+----------------------------------------------------------*/
+
 
 import java.io.*;
 import java.net.*;
@@ -26,15 +61,13 @@ public void run(){
         out = new PrintStream(sock.getOutputStream());
         }catch(IOException ioe){System.out.println(ioe);}
    try{
+       //READS IN CLIENT UID AND USERNAME, SPLITS AROUND CHARACTER"|"
+       //SAVES USERID (UID RANDOM NUM BETWEEN 1 AND 8000000
         userData = in.readLine();
-        System.out.println("Server received:  " + userData);
         String[] userDataArray = userData.split("\\|");
         
         userID = userDataArray[0];
         userName = userDataArray[1].replaceAll("\\s+","");
-        
-        System.out.println("Server received User ID: " + userID);
-        System.out.println("Server received User Name: " + userName);
        
         //CHECKS TO SEE IF CLIENT HAS ALREADY VISITED BY QUERYING THE CLIENT MAP
         //IF AN ENTRY FOR THE UID DOES NOT EXIST, ONE IS CREATED AND GIVEN TWO BLANK
@@ -45,21 +78,16 @@ public void run(){
             //IF USER DOES NOT EXIST, TWO ARRAYS (ONE FOR JOKES SEEN AND PROVERBS SEEN) ARE CREATED
             //AND ADDED TO HASH MAP WHERE USER UID IS KEY
             
-            System.out.println("User doesn't exist, adding now!");
-            
             ArrayList<ArrayList<String>> contentArray = new ArrayList<ArrayList<String>>();
             ArrayList<String> jokeArray = new ArrayList<String>();
             ArrayList<String> proverbArray = new ArrayList<String>();
          
+            //CONTENT ARRAY HOLDS TWO ARRAYS; ONE FOR JOKES CLIENT HAS SEEN AND ONE FOR PROVERBS
             contentArray.add(jokeArray);
             contentArray.add(proverbArray);
             JokeServer.clientMap.put(userID, contentArray);
-            
         }
-        System.out.println("Current UserMap is: ");
-            for(String key : JokeServer.clientMap.keySet()){
-                System.out.println(key +" " + JokeServer.clientMap.get(key));
-            }
+        //SEND JOKE IS CALLED, EITHER A PROVERB OR A JOKE WILL BE SENT DEPENDING ON SERVER MODE
         sendJoke(userName, userID, out);
         sock.close();
     } catch (Exception x){x.printStackTrace();}
@@ -69,28 +97,35 @@ public void run(){
 static void sendJoke (String userName, String clientID, PrintStream out){
     String jokeKey;
     String proverbKey;
-
+//SEND JOKE CHECKS TO SEE WHICH MODE SERVER IS CURRENTLY IN
     try{
         if (JokeServer.JOKE_MODE == true){
-            System.out.println("Joke Mode is " + JokeServer.JOKE_MODE);
+            //IF JOKE MODE IS ACTIVE, CHECKCLIENTJOKES IS CALLED, PASSING THE CLIENT UID
+            //TO CHECK WHICH JOKES THE USER HAS SEEN
+            //JOKEKEY VARIABLE IS A JOKE NOT SEEN BEFORE AND IS SENT BACK TO CIENT
             jokeKey = checkClientJokes(clientID);
             out.println(jokeKey +": " + userName + ", " + JokeServer.jokeMap.get(jokeKey));out.flush();
         }
         else{
-            System.out.println("Joke Mode is " + JokeServer.JOKE_MODE);
-            System.out.println("In Proverbs Search");
+            //SIMILARYLY IF JOKE MODE IS FALSE, CHECKCLIENTPROVERBS IS CALLED
+            //CHECKS WHICH PROVERBS CLIENT HAS NOT SEEN
+            //PROVERBKEY IS RETURNED AND ACCESSES THE PROVERBS HASHMAP, RETURNING APPROPRIATE PROVERB
+            //TO CLIENT
             proverbKey = checkClientProverbs(clientID);
             out.println(proverbKey +": " + userName + ", " + JokeServer.proverbMap.get(proverbKey));out.flush();
         }
     }catch(Exception ex){
-        out.println("Failed in attempt to look  up ");
+        out.println("Failure");
     }
 }
 
 static String checkClientProverbs(String ClientID){
     String proverbToReturn = "";
     
-    //BUG IS IN ARRAY SIZE COUNT
+    //THIS METHOD CHECKS TO SEE IF THE CLIENT
+    //HAS SEEN CERTAIN PROVERBS, IF CLIENT HAS SEEN NO PROVERBS, PA IS SENT
+    //IF CLIENT HAS SEEN ALL PROVERBS, PROVERBSSEEN IS CLEARED AND PROVERBCYCLE COMPLETE
+    //IS PRINTED TO CONSOLE
     
     ArrayList<String> proverbsSeen = JokeServer.clientMap.get(ClientID).get(1);
     if (proverbsSeen.size() == 0){
@@ -100,7 +135,7 @@ static String checkClientProverbs(String ClientID){
     else if(proverbsSeen.size() == 4){
         proverbsSeen.clear();
         proverbToReturn = "PA";
-        System.out.println("Proverb Cycle Completed");
+        System.out.println("Proverb Cycle Completed for Client: " + ClientID);
         proverbsSeen.add(proverbToReturn);
         }
     else{
@@ -116,13 +151,13 @@ static String checkClientProverbs(String ClientID){
 }
 
 static String checkClientJokes(String ClientID){
-    String jokeToReturn = "";
+    //THIS METHOD CHECKS TO SEE IF THE CLIENT
+    //HAS SEEN CERTAIN JOKES, IF CLIENT HAS SEEN NO JOKES, JA IS SENT
+    //IF CLIENT HAS SEEN ALL JOKES, JOKESSEEN IS CLEARED AND JOKECYCLE COMPLETE
+    //IS PRINTED TO CONSOLE
     
-    System.out.println("In Check Client Jokes.");
-    
+    String jokeToReturn = ""; 
     ArrayList<String> jokesSeen = JokeServer.clientMap.get(ClientID).get(0);
-   
-    System.out.println("current set of Jokes Seen: " + jokesSeen);
     
     if (jokesSeen.size() == 0){
         jokeToReturn = "JA";
@@ -131,7 +166,7 @@ static String checkClientJokes(String ClientID){
     else if((jokesSeen.size() == 4)){
         jokesSeen.clear();
         jokeToReturn = "JA";
-        System.out.println("Joke Cycle Completed");
+        System.out.println("Joke Cycle Completed for client: " + ClientID);
         jokesSeen.add(jokeToReturn);
         
         }
@@ -147,16 +182,15 @@ static String checkClientJokes(String ClientID){
     return jokeToReturn;
 }
 }
-   
+  
 public class JokeServer {
-    
+    //VARIABLE JOKE_MODE IS TOGGLED BY CLIENTADMIN SERVER; AUTOMATICALLY SET TO TRUE
     public static boolean JOKE_MODE = true;
 
     public static HashMap<String, String> jokeMap = new HashMap<String, String>();
     public static HashMap<String, String> proverbMap = new HashMap<String, String>();
     public static ArrayList<String> jokeChoices = new ArrayList<String>();
     public static ArrayList<String> proverbChoices = new ArrayList<String>();
-    
     public static HashMap<String, ArrayList<ArrayList<String>>> clientMap = new HashMap<String, ArrayList<ArrayList<String>>>();
     
     public static void main(String[] args) throws IOException {
@@ -165,11 +199,14 @@ public class JokeServer {
        int port = 4545;
        Socket sock;
        
+       //NEW ADMIN LOOPER IS STARTED IN DIFFERENT THREAD LISTENING FOR ADMIN CONNECTION
        AdminLooper AL = new AdminLooper();
        Thread t = new Thread(AL);
        t.start();
     
        ServerSocket servsock = new ServerSocket(port, q_len);
+       //JOKES AND PROVERBS ARE POPULATED ON STARTUP; CHOICES ARE ALSO POPULATED IN 
+       //ARRAYLISTS TO REFERENCE AGAINST JOKES AND PROVERBS SEEN BY CLIENT
        
           jokeMap.put("JA", "Why did the chicken cross the road? To get to the other side");
           jokeMap.put("JB", "What is red and smells like paint? Red paint.");
@@ -201,6 +238,9 @@ public class JokeServer {
 }
 
  class AdminWorker extends Thread{
+     //ADMINWORKER IS NEW THREAD LISTENING FOR INPUT FROM CLIENTADMIN SERVER
+     //CHANGES BETWEEN JOKE AND PROVERB MODE
+     
     Socket AdminSock;
     AdminWorker (Socket s) {AdminSock = s;}}
     
@@ -219,22 +259,20 @@ public class JokeServer {
       ServerSocket servsock = new ServerSocket(port, q_len);
       
       while (adminControlSwitch) {
-	// wait for the next ADMIN client connection:
+	//STARTS LISTENING AT PORT 5050 FOR A NEW ADMIN CONNECTION 
 	sock = servsock.accept();
 	new AdminWorker (sock).start(); 
         in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
         out = new PrintStream(sock.getOutputStream());
         modeChangeInput = in.readLine();
-        System.out.println("Received from Admin=" + modeChangeInput);
-        System.out.println();
+        //MODECHANGEINPUT LISTENS FOR A 1 FROM THE CLIENTADMINSERVER
+        //IF ONE IS RECEIVED, JOKESERVER CHANGES BETWEEN PROVERB AND JOKE MODE
         if(modeChangeInput.equals("1")){
-            System.out.println("Changing Mode");
             if(JokeServer.JOKE_MODE==true){
                 JokeServer.JOKE_MODE = false;
                 out.println("Mode was changed to proverb.");
             }
             else{
-                System.out.println("Changing Mode");
                 JokeServer.JOKE_MODE = true;
                 out.println("Mode was changed to joke.");
             }
