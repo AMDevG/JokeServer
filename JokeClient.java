@@ -30,9 +30,8 @@ public class JokeClient {
         System.out.println("Client UID " + UID);
 
         try{
-            System.out.println("Sending UID");
             IDout = new PrintStream(IDsock.getOutputStream());
-            IDout.print(UID);IDout.flush();
+            IDout.print(UID);
             String nameToSend = in.readLine();
             System.out.println("Sending name " + nameToSend);
             IDout.println(nameToSend);

@@ -14,10 +14,6 @@ class Worker extends Thread{
     Socket sock;
     Worker (Socket s) {sock = s;}
 
-/* Worker class extends the Thread class making it a subclass so that it can make use of Java's
-  threading capabilities. Threading is necessary to the server's functionality so that the server can 
-  accept multiple client requests simultaneously (or almost simultaneously)*/
-
 public void run(){
 
     PrintStream out = null;
@@ -31,21 +27,16 @@ public void run(){
         }catch(IOException ioe){System.out.println(ioe);}
    try{
         userID = in.readLine();
-        System.out.println("User ID From Client:" + userID);
-        out.println("Welcome!, please enter your name!");out.flush();
+        System.out.println("Connection accepted from " + userID);
+        out.println("Welcome!, please enter your name!");
         userName = in.readLine();
         System.out.println("userName is currently " + userName);
         
-        
-        if(JokeServer.clientMap.containsKey(userID)){
-            checkClientJokes(userID);
-        }else{
+        if(!JokeServer.clientMap.containsKey(userID)){
             System.out.println("User doesn't exist, adding now!");
             JokeServer.clientMap.put(userID, new ArrayList<String>());
-            System.out.println("User: " + userID + "has seen jokes: " + checkClientJokes(userID));
+            //System.out.println("User: " + userID + "has seen jokes: " + checkClientJokes(userID));
         }
-        
-        System.out.println("Connection accepted from " + userID);
         sendJoke(userName, userID, out);
     } catch (Exception x){x.printStackTrace();}
    
@@ -55,10 +46,7 @@ static void sendJoke (String userName, String clientID, PrintStream out){
     String jokeKey;
     try{
         jokeKey = checkClientJokes(clientID);
-        System.out.println("Checked Jokes Jokey Key is: " + jokeKey);
-        System.out.println("Current Client Map is " + JokeServer.clientMap.get(clientID));
-        //System.out.println("Checking client jokes return value is: " + checkClientJokes(clientID));
-        out.println(userName + ", " + JokeServer.jokeMap.get(jokeKey));
+        out.println(jokeKey +": " + userName + ", " + JokeServer.jokeMap.get(jokeKey));
         
     }catch(Exception ex){
         out.println("Failed in attempt to look  up ");
@@ -82,6 +70,7 @@ static String checkClientJokes(String ClientID){
             }
         }
     }
+    System.out.println("Returning Joke: " + jokeToReturn);
     return jokeToReturn;
 }
     
