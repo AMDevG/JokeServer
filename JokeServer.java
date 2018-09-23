@@ -40,14 +40,15 @@ public void run(){
         if(!JokeServer.clientMap.containsKey(userID)){
             System.out.println("User doesn't exist, adding now!");
             JokeServer.clientMap.put(userID, new ArrayList<String>());
-            System.out.println("Current UserMap is: ");
+    
+        }
+        System.out.println("Current UserMap is: ");
             for(String key : JokeServer.clientMap.keySet()){
                 System.out.println(key +" " + JokeServer.clientMap.get(key));
-                
             }
-            //System.out.println("User: " + userID + "has seen jokes: " + checkClientJokes(userID));
-        }
+        System.out.println("Sending new Joke ");
         sendJoke(userName, userID, out);
+        sock.close();
     } catch (Exception x){x.printStackTrace();}
    
 }
@@ -84,14 +85,6 @@ static String checkClientJokes(String ClientID){
     return jokeToReturn;
 }
     
-    
-
-
-
-
-
-
-
 
 public static class JokeServer {
 
@@ -102,8 +95,7 @@ public static class JokeServer {
     private static HashMap<String, ArrayList<String>> clientMap = new HashMap<String, ArrayList<String>>();
     
     public static void main(String[] args) throws IOException {
-        
-       System.out.println("In Main of Server");
+
        int q_len = 6;
        int port = 4545;
        Socket sock;
@@ -131,15 +123,5 @@ public static class JokeServer {
            new Worker(sock).start();
        }
     }
-
-   // private JokeServer(){};
-
-    /*public static JokeServer getInstance(){
-      if(instance == null){
-        instance = new JokeServer();
-        return instance;
-      }
-      return instance;
-    }*/
 }
 }

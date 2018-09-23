@@ -6,6 +6,7 @@ public class JokeClient {
     private static int UID;
     private static boolean hasVisited;
     public static String userName;
+    public static String userInput;
     private static Socket IDsock;
 
     public static void main (String args[]){
@@ -33,8 +34,8 @@ public class JokeClient {
         
     try{
         do{ 
-            userName = in.readLine(); 
-            if(userName.indexOf("quit") < 0){
+            userInput = in.readLine(); 
+            if(userInput.indexOf("quit") < 0){
                 getJoke(serverName);}
         }while (true);  
         
@@ -63,11 +64,18 @@ static void getJoke(String serverName){
         fromServer =
                 new BufferedReader(new InputStreamReader(IDsock.getInputStream()));
         toServer = new PrintStream(IDsock.getOutputStream());
-        System.out.println("Please enter your name");
-        userName = in.readLine();
-        toServer.println(UID + " | " + userName); toServer.flush();
-        //toServer.println(userName); toServer.flush();
         
+        if(!hasVisited){
+            hasVisited = true;
+            System.out.println("Please enter your name");
+            userName = in.readLine();
+            toServer.println(UID + " | " + userName); toServer.flush();
+        }
+        else{
+            String entry = in.readLine();
+            toServer.println(UID + " | " + userName); toServer.flush();
+        }
+
         for (int i = 1; i<=3; i++){
             textFromServer = fromServer.readLine();
             if (textFromServer != null) System.out.println(textFromServer);
