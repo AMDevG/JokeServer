@@ -22,36 +22,33 @@ public void run(){
 
     PrintStream out = null;
     BufferedReader in = null;
+    String userName;
+    String userID;
     
     try{
         in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
         out = new PrintStream(sock.getOutputStream());
-    try{
-        String userID;
-        String userName;
+        }catch(IOException ioe){System.out.println(ioe);}
+   try{
         userID = in.readLine();
+        System.out.println("User ID From Client:" + userID);
+        out.println("Welcome!, please enter your name!");out.flush();
+        userName = in.readLine();
+        System.out.println("userName is currently " + userName);
+        
         
         if(JokeServer.clientMap.containsKey(userID)){
             checkClientJokes(userID);
         }else{
             System.out.println("User doesn't exist, adding now!");
             JokeServer.clientMap.put(userID, new ArrayList<String>());
-            //System.out.println("User: " + userID + "has seen jokes: " + checkClientJokes(userID));
+            System.out.println("User: " + userID + "has seen jokes: " + checkClientJokes(userID));
         }
         
         System.out.println("Connection accepted from " + userID);
-        //System.out.println("Here is a proverb " + JokeServer.proverbMap.get("PA"));
-        userName = in.readLine();
-        //System.out.println("Server got user " + userName);
-        //out.println("About to send you a joke!");
         sendJoke(userName, userID, out);
-    } catch (Exception x){
-        System.out.println("Server read error");
-        x.printStackTrace();
-    }
-    sock.close();
-    }catch(IOException ioe){System.out.println(ioe);
-    }
+    } catch (Exception x){x.printStackTrace();}
+   
 }
 
 static void sendJoke (String userName, String clientID, PrintStream out){
