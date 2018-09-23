@@ -17,15 +17,15 @@ public class JokeClient {
 
         if(args.length < 1){
             serverName = "localhost";
-            try{IDsock = new Socket(serverName, 3024);}catch(Exception e){e.printStackTrace();}
+            try{IDsock = new Socket(serverName, 4545);}catch(Exception e){e.printStackTrace();}
         }else{serverName = args[0];
-            try{IDsock = new Socket(serverName, 3024);}catch(Exception e){e.printStackTrace();}
+            try{IDsock = new Socket(serverName, 4545);}catch(Exception e){e.printStackTrace();}
         }
 
         UID = generateUID();
 
         System.out.println("John Berry's JokeClient, 1.8.\n");
-        System.out.println("Using server: " + serverName + ", Port: 3024");
+        System.out.println("Using server: " + serverName + ", Port: 4545");
         System.out.println("Client UID " + UID);
 
         try{
