@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package javaapplicationjokes;
+
 
 import java.io.*;
 import java.net.*;
@@ -85,7 +80,6 @@ static String checkClientProverbs(String ClientID){
         JokeServer.clientMap.get(ClientID).clear();
         proverbToReturn = "PA";
         JokeServer.clientMap.get(ClientID).add(proverbToReturn);
-        
         }
     else{
         for(String proverb : JokeServer.proverbChoices){
@@ -186,6 +180,7 @@ static class AdminLooper implements Runnable {
   public boolean adminControlSwitch = true;
   PrintStream out = null;
   BufferedReader in = null;
+  String modeChangeInput;
 
   public void run(){ // RUNning the Admin listen loop
     System.out.println("In the admin looper thread");
@@ -196,13 +191,28 @@ static class AdminLooper implements Runnable {
    
     try{
       ServerSocket servsock = new ServerSocket(port, q_len);
-      //in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-      //out = new PrintStream(sock.getOutputStream());
       
       while (adminControlSwitch) {
 	// wait for the next ADMIN client connection:
 	sock = servsock.accept();
 	new AdminWorker (sock).start(); 
+        in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+        out = new PrintStream(sock.getOutputStream());
+        modeChangeInput = in.readLine();
+        System.out.println("Received from Admin=" + modeChangeInput);
+        System.out.println();
+        if(modeChangeInput.equals("1")){
+            System.out.println("Changing Mode");
+            if(JokeServer.JOKE_MODE==true){
+                JokeServer.JOKE_MODE = false;
+                out.println("Mode was changed to proverb.");
+            }
+            else{
+                System.out.println("Changing Mode");
+                JokeServer.JOKE_MODE = true;
+                out.println("Mode was changed to joke.");
+            }
+        }
       }
     }catch (IOException ioe) {System.out.println(ioe);}
   

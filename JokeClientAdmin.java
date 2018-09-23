@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package javaapplicationjokes;
+
 
 /**
  *
@@ -22,7 +22,7 @@ public class JokeClientAdmin {
     
         System.out.println("John Berry's JokeClient, 1.8.\n");
         System.out.println("Using server: " + ", Port: 5050");
-        System.out.println("Press Enter to get started!");
+        System.out.println("Press Enter Twice to Change Modes");
 
     try{
         do{ 
@@ -39,14 +39,11 @@ static void switchModes(){
     try{
         Socket sock = new Socket("localhost", 5050);
         PrintStream toServer = new PrintStream(sock.getOutputStream());
-        toServer.println("CHANGE");
+        System.out.println("Changing Mode Received");
+        toServer.println(1);
     }catch (IOException x){
         System.out.println("Socket error");
         x.printStackTrace();
     }
 }
 }
-
-
-
-
