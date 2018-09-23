@@ -212,8 +212,6 @@ static class AdminLooper implements Runnable {
   String modeChangeInput;
 
   public void run(){ // RUNning the Admin listen loop
-    System.out.println("In the admin looper thread");
-    
     int q_len = 6; /* Number of requests for OpSys to queue */
     int port = 5050;  // We are listening at a different port for Admin clients
     Socket sock;
