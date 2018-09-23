@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package javaapplicationjokes;
 
 import java.io.*;
 import java.net.*;
@@ -147,9 +146,9 @@ static String checkClientJokes(String ClientID){
     }
     return jokeToReturn;
 }
-    
-
-public static class JokeServer {
+}
+   
+public class JokeServer {
     
     public static boolean JOKE_MODE = true;
 
@@ -158,7 +157,7 @@ public static class JokeServer {
     public static ArrayList<String> jokeChoices = new ArrayList<String>();
     public static ArrayList<String> proverbChoices = new ArrayList<String>();
     
-    private static HashMap<String, ArrayList<ArrayList<String>>> clientMap = new HashMap<String, ArrayList<ArrayList<String>>>();
+    public static HashMap<String, ArrayList<ArrayList<String>>> clientMap = new HashMap<String, ArrayList<ArrayList<String>>>();
     
     public static void main(String[] args) throws IOException {
 
@@ -201,19 +200,19 @@ public static class JokeServer {
     }
 }
 
-static class AdminWorker extends Thread{
+ class AdminWorker extends Thread{
     Socket AdminSock;
     AdminWorker (Socket s) {AdminSock = s;}}
     
-static class AdminLooper implements Runnable {
+ class AdminLooper implements Runnable {
   public boolean adminControlSwitch = true;
   PrintStream out = null;
   BufferedReader in = null;
   String modeChangeInput;
 
-  public void run(){ // RUNning the Admin listen loop
-    int q_len = 6; /* Number of requests for OpSys to queue */
-    int port = 5050;  // We are listening at a different port for Admin clients
+  public void run(){
+    int q_len = 6;
+    int port = 5050;
     Socket sock;
    
     try{
@@ -245,7 +244,7 @@ static class AdminLooper implements Runnable {
   
   }
 }
-}
+
 
 
 
