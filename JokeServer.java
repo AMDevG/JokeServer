@@ -36,18 +36,18 @@ public void run(){
         
         System.out.println("Server received User ID: " + userID);
         System.out.println("Server received User Name: " + userName);
-        
-        //out.println("Welcome!, please enter your name!");out.flush();
-        //userName = in.readLine();
-        //System.out.println("userName is currently " + userName);
-        
-        
-//        if(!JokeServer.clientMap.containsKey(userID)){
-//            System.out.println("User doesn't exist, adding now!");
-//            JokeServer.clientMap.put(userID, new ArrayList<String>());
-//            System.out.println("User: " + userID + "has seen jokes: " + checkClientJokes(userID));
-//        }
-//        sendJoke(userName, userID, out);
+       
+        if(!JokeServer.clientMap.containsKey(userID)){
+            System.out.println("User doesn't exist, adding now!");
+            JokeServer.clientMap.put(userID, new ArrayList<String>());
+            System.out.println("Current UserMap is: ");
+            for(String key : JokeServer.clientMap.keySet()){
+                System.out.println(key +" " + JokeServer.clientMap.get(key));
+                
+            }
+            //System.out.println("User: " + userID + "has seen jokes: " + checkClientJokes(userID));
+        }
+        sendJoke(userName, userID, out);
     } catch (Exception x){x.printStackTrace();}
    
 }
@@ -56,7 +56,7 @@ static void sendJoke (String userName, String clientID, PrintStream out){
     String jokeKey;
     try{
         jokeKey = checkClientJokes(clientID);
-        out.println(jokeKey +": " + userName + ", " + JokeServer.jokeMap.get(jokeKey));
+        out.println(jokeKey +": " + userName + ", " + JokeServer.jokeMap.get(jokeKey));out.flush();
         
     }catch(Exception ex){
         out.println("Failed in attempt to look  up ");
