@@ -21,17 +21,8 @@ public class JokeClient {
         System.out.println("John Berry's JokeClient, 1.8.\n");
         System.out.println("Using server: " + serverName + ", Port: 4545");
         System.out.println("Client UID " + UID);
+        System.out.println("Press Enter to get started!");
 
-        /*try{
-            IDout = new PrintStream(IDsock.getOutputStream());
-            IDout.print(UID);
-            //String nameToSend = in.readLine();
-            //System.out.println("Sending name " + nameToSend);
-            //IDout.println(nameToSend);
-        } catch(IOException x){x.printStackTrace();}*/
-
-        //SENDS COOKIE OF USER ID TO SERVER
-        
     try{
         do{ 
             userInput = in.readLine(); 

@@ -70,13 +70,19 @@ static String checkClientJokes(String ClientID){
     ArrayList<String> jokesSeen = JokeServer.clientMap.get(ClientID);
     if (jokesSeen.size() == 0){
         jokeToReturn = "JA";
-        //ADDS JOKE TO CLIENT ARRAY LIST
         JokeServer.clientMap.get(ClientID).add(jokeToReturn);
     }
+    else if((jokesSeen.size() == 4)){
+        JokeServer.clientMap.get(ClientID).clear();
+        jokeToReturn = "JA";
+        JokeServer.clientMap.get(ClientID).add(jokeToReturn);
+        
+        }
     else{
         for(String joke : JokeServer.jokeChoices){
             if(!jokesSeen.contains(joke)){
                 jokeToReturn = joke;
+                JokeServer.clientMap.get(ClientID).add(jokeToReturn);
                 return jokeToReturn;
             }
         }
