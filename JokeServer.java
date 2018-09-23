@@ -46,7 +46,6 @@ public void run(){
             for(String key : JokeServer.clientMap.keySet()){
                 System.out.println(key +" " + JokeServer.clientMap.get(key));
             }
-        System.out.println("Sending new Joke ");
         sendJoke(userName, userID, out);
         sock.close();
     } catch (Exception x){x.printStackTrace();}
@@ -87,12 +86,13 @@ static String checkClientJokes(String ClientID){
             }
         }
     }
-    System.out.println("Returning Joke: " + jokeToReturn);
     return jokeToReturn;
 }
     
 
 public static class JokeServer {
+    
+    public static boolean JOKE_MODE = false;
 
     public static HashMap<String, String> jokeMap = new HashMap<String, String>();
     public static HashMap<String, String> proverbMap = new HashMap<String, String>();
@@ -105,12 +105,17 @@ public static class JokeServer {
        int q_len = 6;
        int port = 4545;
        Socket sock;
+       
+       AdminLooper AL = new AdminLooper();
+       Thread t = new Thread(AL);
+       t.start();
+    
        ServerSocket servsock = new ServerSocket(port, q_len);
        
-          jokeMap.put("JA", "Why did the chicken cross the road?");
-          jokeMap.put("JB", "Why did the chicken cross the alley?");
-          jokeMap.put("JC", "Why did the chicken cross the SIDEWALK?");
-          jokeMap.put("JD", "Why did the chicken cross the GUTTER?");
+          jokeMap.put("JA", "Why did the chicken cross the road? To get to the other side");
+          jokeMap.put("JB", "What is red and smells like paint? Red paint.");
+          jokeMap.put("JC", "How much does a pound of feathers weigh? A pound.");
+          jokeMap.put("JD", "What is brown and sticky? A stick.");
 
           proverbMap.put("PA", "The early bird catches the worm.");
           proverbMap.put("PB", "When in Rome, do as the Romans.");
@@ -130,4 +135,39 @@ public static class JokeServer {
        }
     }
 }
+
+static class AdminWorker extends Thread{
+    Socket AdminSock;
+    AdminWorker (Socket s) {AdminSock = s;}}
+    
+static class AdminLooper implements Runnable {
+  public boolean adminControlSwitch = true;
+  PrintStream out = null;
+  BufferedReader in = null;
+
+  public void run(){ // RUNning the Admin listen loop
+    System.out.println("In the admin looper thread");
+    
+    int q_len = 6; /* Number of requests for OpSys to queue */
+    int port = 5050;  // We are listening at a different port for Admin clients
+    Socket sock;
+   
+    try{
+      ServerSocket servsock = new ServerSocket(port, q_len);
+      //in = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+      //out = new PrintStream(sock.getOutputStream());
+      
+      while (adminControlSwitch) {
+	// wait for the next ADMIN client connection:
+	sock = servsock.accept();
+	new AdminWorker (sock).start(); 
+      }
+    }catch (IOException ioe) {System.out.println(ioe);}
+  
+  }
 }
+}
+
+
+
+
