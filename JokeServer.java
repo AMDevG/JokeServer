@@ -54,13 +54,49 @@ public void run(){
 
 static void sendJoke (String userName, String clientID, PrintStream out){
     String jokeKey;
+    String proverbKey;
+
     try{
-        jokeKey = checkClientJokes(clientID);
-        out.println(jokeKey +": " + userName + ", " + JokeServer.jokeMap.get(jokeKey));out.flush();
-        
+        if (JokeServer.JOKE_MODE == true){
+            System.out.println("Joke Mode is " + JokeServer.JOKE_MODE);
+            jokeKey = checkClientJokes(clientID);
+            out.println(jokeKey +": " + userName + ", " + JokeServer.jokeMap.get(jokeKey));out.flush();
+        }
+        else{
+            System.out.println("Joke Mode is " + JokeServer.JOKE_MODE);
+            System.out.println("In Proverbs Search");
+            proverbKey = checkClientProverbs(clientID);
+            out.println(proverbKey +": " + userName + ", " + JokeServer.proverbMap.get(proverbKey));out.flush();
+        }
     }catch(Exception ex){
         out.println("Failed in attempt to look  up ");
     }
+}
+
+static String checkClientProverbs(String ClientID){
+    String proverbToReturn = "";
+    
+    ArrayList<String> proverbsSeen = JokeServer.clientMap.get(ClientID);
+    if (proverbsSeen.size() == 0){
+        proverbToReturn = "PA";
+        JokeServer.clientMap.get(ClientID).add(proverbToReturn);
+    }
+    else if((proverbsSeen.size() == 4)){
+        JokeServer.clientMap.get(ClientID).clear();
+        proverbToReturn = "PA";
+        JokeServer.clientMap.get(ClientID).add(proverbToReturn);
+        
+        }
+    else{
+        for(String proverb : JokeServer.proverbChoices){
+            if(!proverbsSeen.contains(proverb)){
+                proverbToReturn = proverb;
+                JokeServer.clientMap.get(ClientID).add(proverbToReturn);
+                return proverbToReturn;
+            }
+        }
+    }
+    return proverbToReturn;
 }
 
 static String checkClientJokes(String ClientID){
@@ -92,11 +128,12 @@ static String checkClientJokes(String ClientID){
 
 public static class JokeServer {
     
-    public static boolean JOKE_MODE = false;
+    public static boolean JOKE_MODE = true;
 
     public static HashMap<String, String> jokeMap = new HashMap<String, String>();
     public static HashMap<String, String> proverbMap = new HashMap<String, String>();
     public static ArrayList<String> jokeChoices = new ArrayList<String>();
+    public static ArrayList<String> proverbChoices = new ArrayList<String>();
     
     private static HashMap<String, ArrayList<String>> clientMap = new HashMap<String, ArrayList<String>>();
     
@@ -126,6 +163,11 @@ public static class JokeServer {
           jokeChoices.add("JB");
           jokeChoices.add("JC");
           jokeChoices.add("JD");
+          
+          proverbChoices.add("PA");
+          proverbChoices.add("PB");
+          proverbChoices.add("PC");
+          proverbChoices.add("PD");
           
           System.out.println("John Berry's JokeServer 1.8 starting up, listening at port 4545. \n");
        
