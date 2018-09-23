@@ -13,6 +13,8 @@
 
 \f1\fs22 \cf2 \cb3 \CocoaLigature0 John Berry's JokeServer 1.8 starting up, listening at port 4545. \
 \
+// JokeServer output showing when proverb or joke cycle has been completed for a certain client\
+\
 Joke Cycle Completed for client: 6389323 \
 Joke Cycle Completed for client: 6389323 \
 Joke Cycle Completed for client: 2593288 \
@@ -29,8 +31,15 @@ Joke Cycle Completed for client: 6389323 \
 \
 John Berry's JokeClient, 1.8.\
 \
+//Minor bug need to hit return to get the process started\
+\
 Using server: localhost, Port: 4545\
 Press Enter to get started!\
+\
+//After name is entered, it is filled into subsequent jokes/proverbs\
+// Interleaving is demonstrated flipping between proverb mode and joke mode\
+// while maintaining client state\
+// e.g. JA, switch to proverb, PA, PB, switched to Joke, JB is next joke shown\
 \
 Please enter your name\
 John\
@@ -70,10 +79,18 @@ JA: John, Why did the chicken cross the road? To get to the other side\
 \f2\b \ul Joke Client #2 Output
 \f1\b0 \ulnone \
 \
+//Output from a simultaneous client\
+\
 John Berry's JokeClient, 1.8.\
 \
 Using server: localhost, Port: 4545\
 Press Enter to get started!\
+\
+// User Name Billy is entered. Server is in Proverb mode, so PA, PB, and PC\
+// are shown. Then Joke mode Is toggled and JA, JB, JC, JD are shown.\
+// Proverb mode is then flipped back on, showing the next Proverb PD, before\
+// completing cycle, which PA is then shown again. I did not implement \
+// randomization of either joke or proverbs into program\
 \
 Please enter your name\
 Billy\
@@ -125,6 +142,11 @@ JA: Billy, Why did the chicken cross the road? To get to the other side\
 \f2\b \ul JokeCLientAdmin Output
 \f1\b0 \ulnone \
 \
+// JokeClientAdmin switches between Joke and Proverb mode on Enter keystroke\
+// JokeClientAdmin sends message to port 5050 on JokeServer, JokeServer sets \
+// JokeMode either to true or false. if false, proverbs are returned, default \
+// mode is in Joke Mode\
+\
 John Berry's JokeAdminClient, 1.8.\
 \
 Using server: localhost, Port: 5050\
@@ -138,4 +160,5 @@ Changing JokeServer Mode\
 \
 Changing JokeServer Mode\
 \
+//JokeClientAdmin is notified that mode has changed successfully\
 }
